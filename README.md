@@ -22,16 +22,16 @@ This is a plugin template for [Zotero](https://www.zotero.org/). Plugins using t
 
 📜[Zotero Source Code](https://github.com/zotero/zotero)
 
-📌[Zotero Plugin Template](https://github.com/windingwind/zotero-plugin-template)(This repo)
+📌[Zotero Plugin Template](https://github.com/inciteful-xyz/inciteful-zotero-plugin)(This repo)
 
 > 👍You are currently in `bootstrap` extension mode. To use `overlay` mode, plsase switch to `overlay` branch in git.
 
 > 👁 Watch this repo so that you can be notified whenever there are fixes & updates.
 
-If you are using this repo, I recommended that you put this badge ([![Using Zotero Plugin Template](https://img.shields.io/badge/Using-Zotero%20Plugin%20Template-blue?style=flat-square&logo=github)](https://github.com/windingwind/zotero-plugin-template)) on your README:
+If you are using this repo, I recommended that you put this badge ([![Using Zotero Plugin Template](https://img.shields.io/badge/Using-Zotero%20Plugin%20Template-blue?style=flat-square&logo=github)](https://github.com/inciteful-xyz/inciteful-zotero-plugin)) on your README:
 
 ```md
-[![Using Zotero Plugin Template](https://img.shields.io/badge/Using-Zotero%20Plugin%20Template-blue?style=flat-square&logo=github)](https://github.com/windingwind/zotero-plugin-template)
+[![Using Zotero Plugin Template](https://img.shields.io/badge/Using-Zotero%20Plugin%20Template-blue?style=flat-square&logo=github)](https://github.com/inciteful-xyz/inciteful-zotero-plugin)
 ```
 
 ## Features
@@ -220,7 +220,7 @@ You can also:
 
 ### About Hooks
 
-> See also [`src/hooks.ts`](https://github.com/windingwind/zotero-plugin-template/blob/bootstrap/src/hooks.ts)
+> See also [`src/hooks.ts`](https://github.com/inciteful-xyz/inciteful-zotero-plugin/blob/bootstrap/src/hooks.ts)
 
 1. When install/enable/startup triggered from Zotero, `bootstrap.js` > `startup` is called
    - Wait for Zotero ready
@@ -234,7 +234,7 @@ You can also:
 
 ### About Global Variables
 
-> See also [`src/index.ts`](https://github.com/windingwind/zotero-plugin-template/blob/bootstrap/src/index.ts)
+> See also [`src/index.ts`](https://github.com/inciteful-xyz/inciteful-zotero-plugin/blob/bootstrap/src/index.ts)
 
 The bootstrapped plugin runs in a sandbox, which does not have default global variables like `Zotero` or `window`, which we used to have in the overlay plugins' window environment.
 
@@ -263,7 +263,7 @@ You only need to maintain one `preferences.xhtml` which runs natively on Zotero 
     </tr>
 </table>
 
-https://github.com/windingwind/zotero-plugin-template/blob/08d72a4e2b3bacff574f537bbd06cb33e6b22480/src/modules/examples.ts#L73-L85
+https://github.com/inciteful-xyz/inciteful-zotero-plugin/blob/08d72a4e2b3bacff574f537bbd06cb33e6b22480/src/modules/examples.ts#L73-L85
 
 > `<preferences>` element is deprecated. Please use the full pref-key in the elements' `preference` attribute. Like:
 

@@ -26,7 +26,7 @@ export class BasicExampleFactory {
       notify: async (
         event: string,
         type: string,
-        ids: Array<string>,
+        ids: Array<string> | Array<number>,
         extraData: { [key: string]: any }
       ) => {
         if (!addon?.data.alive) {
@@ -707,11 +707,11 @@ export class HelperExampleFactory {
   static clipboardExample() {
     new ztoolkit.Clipboard()
       .addText(
-        "![Plugin Template](https://github.com/windingwind/zotero-plugin-template)",
+        "![Plugin Template](https://github.com/inciteful-xyz/inciteful-zotero-plugin)",
         "text/unicode"
       )
       .addText(
-        '<a href="https://github.com/windingwind/zotero-plugin-template">Plugin Template</a>',
+        '<a href="https://github.com/inciteful-xyz/inciteful-zotero-plugin">Plugin Template</a>',
         "text/html"
       )
       .copy();

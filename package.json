@@ -1,14 +1,14 @@
 {
-  "name": "zotero-addon-template",
-  "version": "0.1.5",
-  "description": "Zotero Addon Template",
+  "name": "inciteful-zotero-plugin",
+  "version": "0.0.1",
+  "description": "Inciteful Zotero Plugin",
   "config": {
-    "addonName": "Zotero Addon Template",
-    "addonID": "addontemplate@euclpts.com",
-    "addonRef": "addontemplate",
-    "addonInstance": "AddonTemplate",
-    "releasepage": "https://github.com/windingwind/zotero-addon-template/releases/latest/download/zotero-addon-template.xpi",
-    "updaterdf": "https://raw.githubusercontent.com/windingwind/zotero-addon-template/bootstrap/update.json"
+    "addonName": "Inciteful Zotero Plugin",
+    "addonID": "zotero-plugin@inciteful.xyz",
+    "addonRef": "incitefulzoteroplugin",
+    "addonInstance": "IncitefulZoteroPlugin",
+    "releasepage": "https://github.com/inciteful-xyz/inciteful-zotero-plugin/releases/latest/download/zotero-addon-template.xpi",
+    "updaterdf": "https://raw.githubusercontent.com/inciteful-xyz/inciteful-zotero-plugin/bootstrap/update.json"
   },
   "main": "src/index.ts",
   "scripts": {
@@ -28,14 +28,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/windingwind/zotero-addon-template.git"
+    "url": "git+https://github.com/inciteful-xyz/inciteful-zotero-plugin.git"
   },
-  "author": "windingwind",
+  "author": "inciteful-xyz",
   "license": "AGPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/windingwind/zotero-addon-template/issues"
+    "url": "https://github.com/inciteful-xyz/inciteful-zotero-plugin/issues"
   },
-  "homepage": "https://github.com/windingwind/zotero-addon-template#readme",
+  "homepage": "https://github.com/inciteful-xyz/inciteful-zotero-plugin#readme",
   "dependencies": {
     "zotero-plugin-toolkit": "^2.0.1"
   },
