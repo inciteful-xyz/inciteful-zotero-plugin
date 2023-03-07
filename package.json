@@ -7,7 +7,7 @@
     "addonID": "zotero-plugin@inciteful.xyz",
     "addonRef": "incitefulzoteroplugin",
     "addonInstance": "IncitefulZoteroPlugin",
-    "releasepage": "https://github.com/inciteful-xyz/inciteful-zotero-plugin/releases/latest/download/zotero-addon-template.xpi",
+    "releasepage": "https://github.com/inciteful-xyz/inciteful-zotero-plugin/releases/latest/download/inciteful-zotero-plugin.xpi",
     "updaterdf": "https://raw.githubusercontent.com/inciteful-xyz/inciteful-zotero-plugin/bootstrap/update.json"
   },
   "main": "src/index.ts",
