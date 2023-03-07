@@ -96,7 +96,7 @@ export class KeyExampleFactory {
       key: "L",
       modifiers: "alt",
       callback: (keyOptions) => {
-        addon.hooks.onShortcuts("larger");
+        // addon.hooks.onShortcuts("larger");
       },
     });
     // Register an element key using <key> for Alt+S
@@ -133,7 +133,7 @@ export class KeyExampleFactory {
       key: "C",
       modifiers: "alt",
       callback: (keyOptions) => {
-        addon.hooks.onShortcuts("confliction");
+        // addon.hooks.onShortcuts("confliction");
       },
     });
     new ztoolkit.ProgressWindow(config.addonName)
