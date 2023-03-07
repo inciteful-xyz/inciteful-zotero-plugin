@@ -1,52 +1,56 @@
-import { config } from "../package.json";
-import { getString, initLocale } from "./modules/locale";
-import { registerPrefsScripts } from "./modules/preferenceScript";
-import { SearchFactory } from './modules/inciteful';
+import { config } from '../package.json'
+import { getString, initLocale } from './modules/locale'
+import { registerPrefsScripts } from './modules/preferenceScript'
+import {
+  SearchFactory,
+  openInciteful,
+  getIDsFromItems
+} from './modules/inciteful'
 
-async function onStartup() {
+async function onStartup () {
   await Promise.all([
     Zotero.initializationPromise,
     Zotero.unlockPromise,
-    Zotero.uiReadyPromise,
-  ]);
-  initLocale();
+    Zotero.uiReadyPromise
+  ])
+  initLocale()
   ztoolkit.ProgressWindow.setIconURI(
-    "default",
+    'default',
     `chrome://${config.addonRef}/content/icons/favicon.png`
-  );
+  )
 
   // Register your hooks here
-  SearchFactory.registerRightClickMenuItem();
-  SearchFactory.registerLibraryTabPanel();
+  SearchFactory.registerRightClickMenuItem()
+  SearchFactory.registerRightClickCollectionMenuItem()
 }
 
-function onShutdown(): void {
-  ztoolkit.unregisterAll();
+function onShutdown (): void {
+  ztoolkit.unregisterAll()
   // Remove addon object
-  addon.data.alive = false;
-  delete Zotero[config.addonInstance];
+  addon.data.alive = false
+  delete Zotero[config.addonInstance]
 }
 
 /**
  * This function is just an example of dispatcher for Notify events.
  * Any operations should be placed in a function to keep this funcion clear.
  */
-async function onNotify(
+async function onNotify (
   event: string,
   type: string,
   ids: Array<string> | Array<number>,
   extraData: { [key: string]: any }
 ) {
   // You can add your code to the corresponding notify type
-  ztoolkit.log("notify", event, type, ids, extraData);
+  ztoolkit.log('notify', event, type, ids, extraData)
   if (
-    event == "select" &&
-    type == "tab" &&
-    extraData[ids[0]].type == "reader"
+    event == 'select' &&
+    type == 'tab' &&
+    extraData[ids[0]].type == 'reader'
   ) {
     // BasicExampleFactory.exampleNotifierCallback();
   } else {
-    return;
+    return
   }
 }
 
@@ -56,61 +60,41 @@ async function onNotify(
  * @param type event type
  * @param data event data
  */
-async function onPrefsEvent(type: string, data: { [key: string]: any }) {
+async function onPrefsEvent (type: string, data: { [key: string]: any }) {
   switch (type) {
-    case "load":
-      registerPrefsScripts(data.window);
-      break;
+    case 'load':
+      registerPrefsScripts(data.window)
+      break
     default:
-      return;
+      return
   }
 }
+function onSearchItemEvent (ev: Event) {
+  ztoolkit.log('onSearchEvent: ', ev)
+  var zoteroPane = Zotero.getActiveZoteroPane()
 
-function onSearchEvent() {
-  var zoteroPane = Zotero.getActiveZoteroPane();
-  var selectedItems = zoteroPane.getSelectedItems();
-  ztoolkit.log(selectedItems)
+  var selectedItems = zoteroPane.getSelectedItems()
+  ztoolkit.log('Selected Items: ', selectedItems)
 
-  let ids = Array<string>();
-
-  for (let item of selectedItems) {
-
-    let doi = item.getField('DOI');
-
-    if (doi != null && doi != '')
-      ids.push(doi.toString());
-
-    let url = item.getField('url');
-    if (url != null && url != '')
-      ids.push(url.toString());
-
-    ztoolkit.log(ids)
-
-    window.open('https://inciteful.xyz/p?' + ids.map(id => "ids[]=" + encodeURIComponent(id)).join('&'), '_blank');
-  }
-
+  var ids = getIDsFromItems(selectedItems)
+  openInciteful(ids)
 }
 
-function onDialogEvents(type: string) {
-  // switch (type) {
-  //   case "dialogExample":
-  //     HelperExampleFactory.dialogExample();
-  //     break;
-  //   case "clipboardExample":
-  //     HelperExampleFactory.clipboardExample();
-  //     break;
-  //   case "filePickerExample":
-  //     HelperExampleFactory.filePickerExample();
-  //     break;
-  //   case "progressWindowExample":
-  //     HelperExampleFactory.progressWindowExample();
-  //     break;
-  //   case "vtableExample":
-  //     HelperExampleFactory.vtableExample();
-  //     break;
-  //   default:
-  //     break;
-  // }
+function onSearchCollectionEvent (ev: Event) {
+  ztoolkit.log('onSearchEvent: ', ev)
+  var zoteroPane = Zotero.getActiveZoteroPane()
+
+  var selectedCollection = zoteroPane.getSelectedCollection()
+
+  if (selectedCollection == null) return
+
+  ztoolkit.log('Selected Collection: ', selectedCollection)
+
+  var selectedItems = selectedCollection.getChildItems()
+
+  var ids = getIDsFromItems(selectedItems)
+
+  openInciteful(ids)
 }
 
 // Add your hooks here. For element click, etc.
@@ -122,7 +106,6 @@ export default {
   onShutdown,
   onNotify,
   onPrefsEvent,
-  // onShortcuts,
-  onDialogEvents,
-  onSearchEvent,
-};
+  onSearchItemEvent,
+  onSearchCollectionEvent
+}

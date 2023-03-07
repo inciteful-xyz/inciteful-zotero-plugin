@@ -20,14 +20,24 @@ function example (
 }
 
 export class SearchFactory {
-  //   @example
-  //   static registerRightClickMenuCollection () {
-  //     const menuIcon = `chrome://${config.addonRef}/content/icons/favicon@0.5x.png`
-  //     // item menuitem with icon
-  //     ztoolkit.Menu.register('item', {
-  //       tag: 'menuseparator'
-  //     })
-  //   }
+  @example
+  static registerRightClickCollectionMenuItem () {
+    const menuIcon = `chrome://${config.addonRef}/content/icons/favicon@0.5x.png`
+    // item menuitem with icon
+    ztoolkit.Menu.register('collection', {
+      tag: 'menuseparator'
+    })
+
+    ztoolkit.Menu.register('collection', {
+      tag: 'menuitem',
+      id: 'zotero-collectionmenu-inciteful-search',
+      label: getString('menuitem.search'),
+
+      // oncommand: 'alert("Hello World!")',
+      commandListener: ev => addon.hooks.onSearchCollectionEvent(ev),
+      icon: menuIcon
+    })
+  }
 
   @example
   static registerRightClickMenuItem () {
@@ -43,52 +53,52 @@ export class SearchFactory {
       label: getString('menuitem.search'),
 
       // oncommand: 'alert("Hello World!")',
-      commandListener: ev => addon.hooks.onSearchEvent(),
+      commandListener: ev => addon.hooks.onSearchItemEvent(ev),
       icon: menuIcon
     })
   }
+}
 
-  @example
-  static registerLibraryTabPanel () {
-    const tabId = ztoolkit.LibraryTabPanel.register(
-      getString('tabpanel.lib.tab.label'),
-      (panel: XUL.Element, win: Window) => {
-        const elem = ztoolkit.UI.createElement(win.document, 'vbox', {
-          children: [
-            {
-              tag: 'h2',
-              properties: {
-                innerText: 'Hello World!'
-              }
-            },
-            {
-              tag: 'div',
-              properties: {
-                innerText: 'This is a library tab.'
-              }
-            },
-            {
-              tag: 'button',
-              namespace: 'html',
-              properties: {
-                innerText: 'Unregister'
-              },
-              listeners: [
-                {
-                  type: 'click',
-                  listener: () => {
-                    ztoolkit.LibraryTabPanel.unregister(tabId)
-                  }
-                }
-              ]
-            }
-          ]
-        })
-        panel.append(elem)
-      },
-      {
-        targetIndex: 1
-      }
-    )
+export function openInciteful (ids: Array<string>) {
+  ztoolkit.log('Opening Inciteful: ', ids)
+  Zotero.launchURL(
+    'https://inciteful.xyz/p?' +
+      ids.map(id => 'ids[]=' + encodeURIComponent(id)).join('&')
+  )
+}
+
+export function getIDsFromItems (items: Array<Zotero.Item>): Array<string> {
+  let topLevelItems = ensureTopLevelItems(items)
+
+  let ids = Array<string>()
+
+  for (let item of topLevelItems) {
+    let doi = item.getField('DOI')
+
+    if (doi != null && doi != '') ids.push(doi.toString())
+
+    let url = item.getField('url')
+    if (url != null && url != '') ids.push(url.toString())
   }
+
+  ztoolkit.log('Found IDs: ', ids)
+
+  return ids
+}
+
+export function ensureTopLevelItems (
+  items: Array<Zotero.Item>
+): Array<Zotero.Item> {
+  let topLevelItems = Array<Zotero.Item>()
+
+  for (let item of items) {
+    if (item.isTopLevelItem()) {
+      topLevelItems.push(item)
+    } else {
+      let parent = item.topLevelItem
+      if (parent != null) topLevelItems.push(parent)
+    }
+  }
+
+  return topLevelItems
 }
