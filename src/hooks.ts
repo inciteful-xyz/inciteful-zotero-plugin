@@ -1,9 +1,11 @@
 import { config } from '../package.json'
 import { getString, initLocale } from './modules/locale'
 import { registerPrefsScripts } from './modules/preferenceScript'
+import { openIncitefulConnector } from './modules/inciteful'
+import { alertDialog } from './modules/utils'
 import {
   SearchFactory,
-  openInciteful,
+  openIncitefulSearch,
   getIDsFromItems
 } from './modules/inciteful'
 
@@ -69,19 +71,35 @@ async function onPrefsEvent (type: string, data: { [key: string]: any }) {
       return
   }
 }
-function onSearchItemEvent (ev: Event) {
-  ztoolkit.log('onSearchEvent: ', ev)
+function onSearchItemEvent () {
   var zoteroPane = Zotero.getActiveZoteroPane()
 
   var selectedItems = zoteroPane.getSelectedItems()
   ztoolkit.log('Selected Items: ', selectedItems)
 
   var ids = getIDsFromItems(selectedItems)
-  openInciteful(ids)
+  openIncitefulSearch(ids)
 }
 
-function onSearchCollectionEvent (ev: Event) {
-  ztoolkit.log('onSearchEvent: ', ev)
+function onConnectItemEvent () {
+  var zoteroPane = Zotero.getActiveZoteroPane()
+
+  var selectedItems = zoteroPane.getSelectedItems()
+  if (selectedItems.length > 2) {
+    alertDialog(getString('error.connector.toomany'))
+    return
+  }
+
+  var ids = getIDsFromItems(selectedItems)
+  if (ids.length == 0) {
+    alertDialog(getString('error.noItemSelected'))
+    return
+  }
+
+  openIncitefulConnector(ids[0], ids.length > 1 ? ids[1] : null)
+}
+
+function onSearchCollectionEvent () {
   var zoteroPane = Zotero.getActiveZoteroPane()
 
   var selectedCollection = zoteroPane.getSelectedCollection()
@@ -94,7 +112,7 @@ function onSearchCollectionEvent (ev: Event) {
 
   var ids = getIDsFromItems(selectedItems)
 
-  openInciteful(ids)
+  openIncitefulSearch(ids)
 }
 
 // Add your hooks here. For element click, etc.
@@ -107,5 +125,6 @@ export default {
   onNotify,
   onPrefsEvent,
   onSearchItemEvent,
-  onSearchCollectionEvent
+  onSearchCollectionEvent,
+  onConnectItemEvent
 }

@@ -1,5 +1,6 @@
 import { config } from '../../package.json'
 import { getString } from './locale'
+import { alertDialog } from './utils'
 
 function example (
   target: any,
@@ -31,10 +32,10 @@ export class SearchFactory {
     ztoolkit.Menu.register('collection', {
       tag: 'menuitem',
       id: 'zotero-collectionmenu-inciteful-search',
-      label: getString('menuitem.search'),
+      label: getString('collectionitem.search'),
 
       // oncommand: 'alert("Hello World!")',
-      commandListener: ev => addon.hooks.onSearchCollectionEvent(ev),
+      commandListener: ev => addon.hooks.onSearchCollectionEvent(),
       icon: menuIcon
     })
   }
@@ -48,22 +49,44 @@ export class SearchFactory {
     })
 
     ztoolkit.Menu.register('item', {
-      tag: 'menuitem',
-      id: 'zotero-itemmenu-inciteful-search',
-      label: getString('menuitem.search'),
-
-      // oncommand: 'alert("Hello World!")',
-      commandListener: ev => addon.hooks.onSearchItemEvent(ev),
+      tag: 'menu',
+      id: 'zotero-itemmenu-inciteful-main',
+      label: getString('menuitem.main'),
+      children: [
+        {
+          tag: 'menuitem',
+          id: 'zotero-itemmenu-inciteful-search',
+          label: getString('menuitem.search'),
+          commandListener: ev => addon.hooks.onSearchItemEvent()
+        },
+        {
+          tag: 'menuitem',
+          id: 'zotero-itemmenu-inciteful-connector',
+          label: getString('menuitem.connector'),
+          commandListener: ev => addon.hooks.onConnectItemEvent()
+        }
+      ],
       icon: menuIcon
     })
   }
 }
 
-export function openInciteful (ids: Array<string>) {
-  ztoolkit.log('Opening Inciteful: ', ids)
+export function openIncitefulSearch (ids: Array<string>) {
+  if (ids.length == 0) {
+    alertDialog(getString('error.noItemSelected'))
+    return
+  }
   Zotero.launchURL(
     'https://inciteful.xyz/p?' +
       ids.map(id => 'ids[]=' + encodeURIComponent(id)).join('&')
+  )
+}
+
+export function openIncitefulConnector (from: string, to: string | null) {
+  Zotero.launchURL(
+    `https://inciteful.xyz/c?from=${encodeURIComponent(
+      from
+    )}&to=${encodeURIComponent(to ?? '')}&extendedGraph=true`
   )
 }
 
@@ -75,10 +98,12 @@ export function getIDsFromItems (items: Array<Zotero.Item>): Array<string> {
   for (let item of topLevelItems) {
     let doi = item.getField('DOI')
 
-    if (doi != null && doi != '') ids.push(doi.toString())
-
-    let url = item.getField('url')
-    if (url != null && url != '') ids.push(url.toString())
+    if (doi != null && doi != '') {
+      ids.push(doi.toString())
+    } else {
+      let url = item.getField('url')
+      if (url != null && url != '') ids.push(url.toString())
+    }
   }
 
   ztoolkit.log('Found IDs: ', ids)
