@@ -9,6 +9,11 @@ Then, in Zotero, go to `Tools` -> `Add-ons` -> :gear:`icon` -> `Install Add-on F
 ## Features
 The current functionality is limited to initiating searches from your collection in the following ways:
 
-- Right clicking a single item and selecting "Search in Inciteful.xyz"
-- Selecting multiple items, right clicking, and selecting "Search in Inciteful.xyz"
-- Right clicking on a collection and selecting "Search in Inciteful.xyz"
+
+### Graph Search
+- Right clicking a single item and selecting `Inciteful Tools` -> `Graph Search`
+- Selecting multiple items, right clicking, and select `Inciteful Tools` -> `Graph Search`
+- Right clicking on a collection and selecting "Graph Search using Inciteful.xyz"
+
+### Literature Connector
+- Select two items, right click then select `Inciteful Tools` -> `Connect Papers`
