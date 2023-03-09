@@ -76,18 +76,39 @@ export function openIncitefulSearch (ids: Array<string>) {
     alertDialog(getString('error.noItemSelected'))
     return
   }
-  Zotero.launchURL(
-    'https://inciteful.xyz/p?' +
-      ids.map(id => 'ids[]=' + encodeURIComponent(id)).join('&')
-  )
+
+  let params = new URLSearchParams()
+  ids.forEach(id => params.append('ids[]', id))
+
+  launchURL('https://inciteful.xyz/p', params)
 }
 
 export function openIncitefulConnector (from: string, to: string | null) {
-  Zotero.launchURL(
-    `https://inciteful.xyz/c?from=${encodeURIComponent(
-      from
-    )}&to=${encodeURIComponent(to ?? '')}&extendedGraph=true`
-  )
+  let params = new URLSearchParams()
+
+  params.append('from', from)
+  if (to != null) params.append('to', to)
+
+  params.append('extendedGraph', 'true')
+
+  launchURL('https://inciteful.xyz/c', params)
+}
+
+export function launchURL (url: string, params: URLSearchParams) {
+  let newUrl = new URL(url)
+
+  params = addTrackingParams(params)
+  newUrl.search = params.toString()
+
+  Zotero.launchURL(newUrl.toString())
+}
+
+function addTrackingParams (params: UrlSearchParams): params {
+  params.append('utm_source', 'zotero')
+  params.append('utm_medium', 'addon')
+  params.append('utm_campaign', 'inciteful-zotero')
+  params.append('utm_content', 'zotero-addon')
+  return params
 }
 
 export function getIDsFromItems (items: Array<Zotero.Item>): Array<string> {
