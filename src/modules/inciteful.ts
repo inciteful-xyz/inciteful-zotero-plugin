@@ -71,20 +71,43 @@ export class SearchFactory {
   }
 }
 
+interface QueryParam {
+  param: string,
+  value: string
+}
+
+class QueryParams {
+  params: Array<QueryParam>
+
+  constructor() {
+    this.params = []
+  }
+
+  append(param: string, value: string) {
+    this.params.push({ param, value })
+  }
+
+  toString(): string {
+    let params = this.params.map(p => `${p.param}=${encodeURIComponent(p.value)}`)
+    return params.join('&')
+  }
+}
+
+
 export function openIncitefulSearch(ids: Array<string>) {
   if (ids.length == 0) {
     alertDialog(getString('error.noItemSelected'))
     return
   }
 
-  let params = new URLSearchParams()
+  let params = new QueryParams()
   ids.forEach(id => params.append('ids[]', id))
 
   launchURL('https://inciteful.xyz/p', params)
 }
 
 export function openIncitefulConnector(from: string, to: string | null) {
-  let params = new URLSearchParams()
+  let params = new QueryParams()
 
   params.append('from', from)
   if (to != null) params.append('to', to)
@@ -94,16 +117,17 @@ export function openIncitefulConnector(from: string, to: string | null) {
   launchURL('https://inciteful.xyz/c', params)
 }
 
-export function launchURL(url: string, params: URLSearchParams) {
-  let newUrl = new URL(url)
-
+export function launchURL(url: string, params: QueryParams) {
   params = addTrackingParams(params)
-  newUrl.search = params.toString()
 
-  Zotero.launchURL(newUrl.toString())
+  if (params.params.length > 0) {
+    url = `${url}?${params.toString()}`
+  }
+
+  Zotero.launchURL(url)
 }
 
-function addTrackingParams(params: URLSearchParams): URLSearchParams {
+function addTrackingParams(params: QueryParams): QueryParams {
   params.append('utm_source', 'zotero')
   params.append('utm_medium', 'addon')
   params.append('utm_campaign', 'inciteful-zotero')
