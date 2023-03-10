@@ -2,7 +2,7 @@ import { config } from '../../package.json'
 import { getString } from './locale'
 import { alertDialog } from './utils'
 
-function example (
+function example(
   target: any,
   propertyKey: string | symbol,
   descriptor: PropertyDescriptor
@@ -22,7 +22,7 @@ function example (
 
 export class SearchFactory {
   @example
-  static registerRightClickCollectionMenuItem () {
+  static registerRightClickCollectionMenuItem() {
     const menuIcon = `chrome://${config.addonRef}/content/icons/favicon@0.5x.png`
     // item menuitem with icon
     ztoolkit.Menu.register('collection', {
@@ -41,7 +41,7 @@ export class SearchFactory {
   }
 
   @example
-  static registerRightClickMenuItem () {
+  static registerRightClickMenuItem() {
     const menuIcon = `chrome://${config.addonRef}/content/icons/favicon@0.5x.png`
     // item menuitem with icon
     ztoolkit.Menu.register('item', {
@@ -71,7 +71,7 @@ export class SearchFactory {
   }
 }
 
-export function openIncitefulSearch (ids: Array<string>) {
+export function openIncitefulSearch(ids: Array<string>) {
   if (ids.length == 0) {
     alertDialog(getString('error.noItemSelected'))
     return
@@ -83,7 +83,7 @@ export function openIncitefulSearch (ids: Array<string>) {
   launchURL('https://inciteful.xyz/p', params)
 }
 
-export function openIncitefulConnector (from: string, to: string | null) {
+export function openIncitefulConnector(from: string, to: string | null) {
   let params = new URLSearchParams()
 
   params.append('from', from)
@@ -94,7 +94,7 @@ export function openIncitefulConnector (from: string, to: string | null) {
   launchURL('https://inciteful.xyz/c', params)
 }
 
-export function launchURL (url: string, params: URLSearchParams) {
+export function launchURL(url: string, params: URLSearchParams) {
   let newUrl = new URL(url)
 
   params = addTrackingParams(params)
@@ -103,7 +103,7 @@ export function launchURL (url: string, params: URLSearchParams) {
   Zotero.launchURL(newUrl.toString())
 }
 
-function addTrackingParams (params: UrlSearchParams): params {
+function addTrackingParams(params: URLSearchParams): URLSearchParams {
   params.append('utm_source', 'zotero')
   params.append('utm_medium', 'addon')
   params.append('utm_campaign', 'inciteful-zotero')
@@ -111,7 +111,7 @@ function addTrackingParams (params: UrlSearchParams): params {
   return params
 }
 
-export function getIDsFromItems (items: Array<Zotero.Item>): Array<string> {
+export function getIDsFromItems(items: Array<Zotero.Item>): Array<string> {
   let topLevelItems = ensureTopLevelItems(items)
 
   let ids = Array<string>()
@@ -132,7 +132,7 @@ export function getIDsFromItems (items: Array<Zotero.Item>): Array<string> {
   return ids
 }
 
-export function ensureTopLevelItems (
+export function ensureTopLevelItems(
   items: Array<Zotero.Item>
 ): Array<Zotero.Item> {
   let topLevelItems = Array<Zotero.Item>()
