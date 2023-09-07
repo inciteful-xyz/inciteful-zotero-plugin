@@ -3,7 +3,7 @@
     "zotero-plugin@inciteful.xyz": {
       "updates": [
         {
-          "version": "0.0.8",
+          "version": "0.0.9",
           "update_link": "https://github.com/inciteful-xyz/inciteful-zotero-plugin/releases/latest/download/inciteful-zotero-plugin.xpi",
           "applications": {
             "gecko": {
@@ -12,7 +12,7 @@
           }
         },
         {
-          "version": "0.0.8",
+          "version": "0.0.9",
           "update_link": "https://github.com/inciteful-xyz/inciteful-zotero-plugin/releases/latest/download/inciteful-zotero-plugin.xpi",
           "applications": {
             "zotero": {
