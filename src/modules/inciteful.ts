@@ -1,174 +1,175 @@
-import { config } from '../../package.json'
-import { getString } from './locale'
-import { alertDialog } from './utils'
+import { config } from "../../package.json";
+import { getString } from "../utils/locale";
+import { alertDialog } from "./utils";
 
 function example(
   target: any,
   propertyKey: string | symbol,
-  descriptor: PropertyDescriptor
+  descriptor: PropertyDescriptor,
 ) {
-  const original = descriptor.value
+  const original = descriptor.value;
   descriptor.value = function (...args: any) {
     try {
-      ztoolkit.log(`Calling example ${target.name}.${String(propertyKey)}`)
-      return original.apply(this, args)
+      ztoolkit.log(`Calling example ${target.name}.${String(propertyKey)}`);
+      return original.apply(this, args);
     } catch (e) {
-      ztoolkit.log(`Error in example ${target.name}.${String(propertyKey)}`, e)
-      throw e
+      ztoolkit.log(`Error in example ${target.name}.${String(propertyKey)}`, e);
+      throw e;
     }
-  }
-  return descriptor
+  };
+  return descriptor;
 }
 
 export class SearchFactory {
   @example
   static registerRightClickCollectionMenuItem() {
-    const menuIcon = `chrome://${config.addonRef}/content/icons/favicon@0.5x.png`
+    const menuIcon = `chrome://${config.addonRef}/content/icons/favicon@0.5x.png`;
     // item menuitem with icon
-    ztoolkit.Menu.register('collection', {
-      tag: 'menuseparator'
-    })
+    ztoolkit.Menu.register("collection", {
+      tag: "menuseparator",
+    });
 
-    ztoolkit.Menu.register('collection', {
-      tag: 'menuitem',
-      id: 'zotero-collectionmenu-inciteful-search',
-      label: getString('collectionitem.search'),
+    ztoolkit.Menu.register("collection", {
+      tag: "menuitem",
+      id: "zotero-collectionmenu-inciteful-search",
+      label: getString("collectionitem-search"),
 
       // oncommand: 'alert("Hello World!")',
-      commandListener: ev => addon.hooks.onSearchCollectionEvent(),
-      icon: menuIcon
-    })
+      commandListener: (ev) => addon.hooks.onSearchCollectionEvent(),
+      icon: menuIcon,
+    });
   }
 
   @example
   static registerRightClickMenuItem() {
-    const menuIcon = `chrome://${config.addonRef}/content/icons/favicon@0.5x.png`
+    const menuIcon = `chrome://${config.addonRef}/content/icons/favicon@0.5x.png`;
     // item menuitem with icon
-    ztoolkit.Menu.register('item', {
-      tag: 'menuseparator'
-    })
+    ztoolkit.Menu.register("item", {
+      tag: "menuseparator",
+    });
 
-    ztoolkit.Menu.register('item', {
-      tag: 'menu',
-      id: 'zotero-itemmenu-inciteful-main',
-      label: getString('menuitem.main'),
+    ztoolkit.Menu.register("item", {
+      tag: "menu",
+      id: "zotero-itemmenu-inciteful-main",
+      label: getString("menuitem-main"),
       children: [
         {
-          tag: 'menuitem',
-          id: 'zotero-itemmenu-inciteful-search',
-          label: getString('menuitem.search'),
-          commandListener: ev => addon.hooks.onSearchItemEvent()
+          tag: "menuitem",
+          id: "zotero-itemmenu-inciteful-search",
+          label: getString("menuitem-search"),
+          commandListener: (ev) => addon.hooks.onSearchItemEvent(),
         },
         {
-          tag: 'menuitem',
-          id: 'zotero-itemmenu-inciteful-connector',
-          label: getString('menuitem.connector'),
-          commandListener: ev => addon.hooks.onConnectItemEvent()
-        }
+          tag: "menuitem",
+          id: "zotero-itemmenu-inciteful-connector",
+          label: getString("menuitem-connector"),
+          commandListener: (ev) => addon.hooks.onConnectItemEvent(),
+        },
       ],
-      icon: menuIcon
-    })
+      icon: menuIcon,
+    });
   }
 }
 
 interface QueryParam {
-  param: string,
-  value: string
+  param: string;
+  value: string;
 }
 
 class QueryParams {
-  params: Array<QueryParam>
+  params: Array<QueryParam>;
 
   constructor() {
-    this.params = []
+    this.params = [];
   }
 
   append(param: string, value: string) {
-    this.params.push({ param, value })
+    this.params.push({ param, value });
   }
 
   toString(): string {
-    let params = this.params.map(p => `${p.param}=${encodeURIComponent(p.value)}`)
-    return params.join('&')
+    const params = this.params.map(
+      (p) => `${p.param}=${encodeURIComponent(p.value)}`,
+    );
+    return params.join("&");
   }
 }
-
 
 export function openIncitefulSearch(ids: Array<string>) {
   if (ids.length == 0) {
-    alertDialog(getString('error.noItemSelected'))
-    return
+    alertDialog(getString("error-noItemSelected"));
+    return;
   }
 
-  let params = new QueryParams()
-  ids.forEach(id => params.append('ids[]', id))
+  const params = new QueryParams();
+  ids.forEach((id) => params.append("ids[]", id));
 
-  launchURL('https://inciteful.xyz/p', params)
+  launchURL("https://inciteful.xyz/p", params);
 }
 
 export function openIncitefulConnector(from: string, to: string | null) {
-  let params = new QueryParams()
+  const params = new QueryParams();
 
-  params.append('from', from)
-  if (to != null) params.append('to', to)
+  params.append("from", from);
+  if (to != null) params.append("to", to);
 
-  params.append('extendedGraph', 'true')
+  params.append("extendedGraph", "true");
 
-  launchURL('https://inciteful.xyz/c', params)
+  launchURL("https://inciteful.xyz/c", params);
 }
 
 export function launchURL(url: string, params: QueryParams) {
-  params = addTrackingParams(params)
+  params = addTrackingParams(params);
 
   if (params.params.length > 0) {
-    url = `${url}?${params.toString()}`
+    url = `${url}?${params.toString()}`;
   }
 
-  Zotero.launchURL(url)
+  Zotero.launchURL(url);
 }
 
 function addTrackingParams(params: QueryParams): QueryParams {
-  params.append('utm_source', 'zotero')
-  params.append('utm_medium', 'addon')
-  params.append('utm_campaign', 'inciteful-zotero')
-  params.append('utm_content', 'zotero-addon')
-  return params
+  params.append("utm_source", "zotero");
+  params.append("utm_medium", "addon");
+  params.append("utm_campaign", "inciteful-zotero");
+  params.append("utm_content", "zotero-addon");
+  return params;
 }
 
 export function getIDsFromItems(items: Array<Zotero.Item>): Array<string> {
-  let topLevelItems = ensureTopLevelItems(items)
+  const topLevelItems = ensureTopLevelItems(items);
 
-  let ids = Array<string>()
+  const ids = Array<string>();
 
-  for (let item of topLevelItems) {
-    let doi = item.getField('DOI')
+  for (const item of topLevelItems) {
+    const doi = item.getField("DOI");
 
-    if (doi != null && doi != '') {
-      ids.push(doi.toString())
+    if (doi != null && doi != "") {
+      ids.push(doi.toString());
     } else {
-      let url = item.getField('url')
-      if (url != null && url != '') ids.push(url.toString())
+      const url = item.getField("url");
+      if (url != null && url != "") ids.push(url.toString());
     }
   }
 
-  ztoolkit.log('Found IDs: ', ids)
+  ztoolkit.log("Found IDs: ", ids);
 
-  return ids
+  return ids;
 }
 
 export function ensureTopLevelItems(
-  items: Array<Zotero.Item>
+  items: Array<Zotero.Item>,
 ): Array<Zotero.Item> {
-  let topLevelItems = Array<Zotero.Item>()
+  const topLevelItems = Array<Zotero.Item>();
 
-  for (let item of items) {
+  for (const item of items) {
     if (item.isTopLevelItem()) {
-      topLevelItems.push(item)
+      topLevelItems.push(item);
     } else {
-      let parent = item.topLevelItem
-      if (parent != null) topLevelItems.push(parent)
+      const parent = item.topLevelItem;
+      if (parent != null) topLevelItems.push(parent);
     }
   }
 
-  return topLevelItems
+  return topLevelItems;
 }
