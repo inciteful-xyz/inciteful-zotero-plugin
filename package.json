@@ -1,6 +1,6 @@
 {
   "name": "inciteful-zotero-plugin",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Inciteful Plugin for Zotero",
   "config": {
     "addonName": "Inciteful Zotero Plugin",
@@ -28,7 +28,7 @@
     "update-deps": "npm update --save"
   },
   "dependencies": {
-    "zotero-plugin-toolkit": "^4.0.6"
+    "zotero-plugin-toolkit": "^5.1.0-beta.13"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
@@ -37,8 +37,8 @@
     "prettier": "^3.3.3",
     "typescript": "^5.6.2",
     "typescript-eslint": "^8.8.0",
-    "zotero-plugin-scaffold": "^0.1.6",
-    "zotero-types": "^2.2.0"
+    "zotero-plugin-scaffold": "^0.8.2",
+    "zotero-types": "^4.1.0-beta.4"
   },
   "prettier": {
     "printWidth": 80,
