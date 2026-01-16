@@ -1,6 +1,6 @@
 # Inciteful Plugin for Zotero
 
-The plugin is now updated to work with Zotero 7 but support has been dropped for Zotero 6.  As a result download the appropriate release below:
+The plugin is now updated to work with Zotero 7 but support has been dropped for Zotero 6. As a result download the appropriate release below:
 
 - Version 7 - [latest release](https://github.com/inciteful-xyz/inciteful-zotero-plugin/releases/latest/download/inciteful-zotero-plugin.xpi)
 - Version 6 - [0.0.9](https://github.com/inciteful-xyz/inciteful-zotero-plugin/releases/download/0.0.9/inciteful-zotero-plugin.xpi)

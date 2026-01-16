@@ -76,7 +76,7 @@ function onShutdown(): void {
   addon.data.dialog?.window?.close();
   // Remove addon object
   addon.data.alive = false;
-  delete Zotero[config.addonInstance];
+  delete (Zotero as Record<string, unknown>)[config.addonInstance];
 }
 
 function onSearchItemEvent() {
