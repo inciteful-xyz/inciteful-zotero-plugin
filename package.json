@@ -1,7 +1,7 @@
 {
   "name": "inciteful-zotero-plugin",
   "type": "module",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Inciteful Plugin for Zotero",
   "config": {
     "addonName": "Inciteful Zotero Plugin",
