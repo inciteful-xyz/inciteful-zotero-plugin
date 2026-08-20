@@ -1,3 +1,2 @@
-/* eslint-disable no-undef */
-pref("__prefsPrefix__.enable", true);
-pref("__prefsPrefix__.input", "This is input");
+// No preferences are currently used by this plugin.
+// Add pref("<name>", <default>) lines here when one is introduced.

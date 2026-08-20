@@ -1,4 +1,3 @@
-import { config } from "../package.json";
 import { getString, initLocale } from "./utils/locale";
 import { createZToolkit } from "./utils/ztoolkit";
 
@@ -18,69 +17,64 @@ async function onStartup() {
   ]);
 
   initLocale();
-  // TODO: Do I need this?
-  ztoolkit.ProgressWindow.setIconURI(
-    "default",
-    `chrome://${config.addonRef}/content/icons/favicon.png`,
-  );
 
-  // Register your hooks here
-  SearchFactory.registerRightClickMenuItem();
-  SearchFactory.registerRightClickCollectionMenuItem();
+  // Menus registered via Zotero.MenuManager are global (all windows)
+  SearchFactory.registerMenus();
 
   await Promise.all(
     Zotero.getMainWindows().map((win) => onMainWindowLoad(win)),
   );
+
+  // Mark initialized as true to confirm plugin loading status
+  // outside of the plugin (e.g. scaffold testing process)
+  addon.data.initialized = true;
 }
 
-async function onMainWindowLoad(win: Window): Promise<void> {
+async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
   // Create ztoolkit for every window
   addon.data.ztoolkit = createZToolkit();
 
-  // @ts-ignore This is a moz feature
-  win.MozXULElement.insertFTLIfNeeded(`${config.addonRef}-mainWindow.ftl`);
-
-  const popupWin = new ztoolkit.ProgressWindow(config.addonName, {
-    closeOnClick: true,
-    closeTime: -1,
-  })
-    .createLine({
-      text: getString("startup-begin"),
-      type: "default",
-      progress: 0,
-    })
-    .show();
-
-  await Zotero.Promise.delay(1000);
-  popupWin.changeLine({
-    progress: 30,
-    text: `[30%] ${getString("startup-begin")}`,
-  });
-
-  await Zotero.Promise.delay(1000);
-
-  popupWin.changeLine({
-    progress: 100,
-    text: `[100%] ${getString("startup-finish")}`,
-  });
-  popupWin.startCloseTimer(5000);
+  win.MozXULElement.insertFTLIfNeeded(
+    `${addon.data.config.addonRef}-mainWindow.ftl`,
+  );
 }
 
-async function onMainWindowUnload(win: Window): Promise<void> {
+async function onMainWindowUnload(_win: Window): Promise<void> {
   ztoolkit.unregisterAll();
   addon.data.dialog?.window?.close();
 }
 
 function onShutdown(): void {
+  SearchFactory.unregisterMenus();
   ztoolkit.unregisterAll();
   addon.data.dialog?.window?.close();
   // Remove addon object
   addon.data.alive = false;
-  delete (Zotero as Record<string, unknown>)[config.addonInstance];
+  delete (Zotero as Record<string, unknown>)[addon.data.config.addonInstance];
+}
+
+/**
+ * Zotero 10 replaced `getSelectedCollection()` (which now throws) with the
+ * multi-selection-aware `getSelectedCollections()`. Older versions only have
+ * the singular form.
+ */
+function getSelectedCollectionsCompat(
+  zoteroPane: _ZoteroTypes.ZoteroPane,
+): Zotero.Collection[] {
+  const pane = zoteroPane as unknown as {
+    getSelectedCollections?: () => Zotero.Collection[];
+    getSelectedCollection?: () => Zotero.Collection | undefined;
+  };
+  if (typeof pane.getSelectedCollections === "function") {
+    return pane.getSelectedCollections();
+  }
+  const collection = pane.getSelectedCollection?.();
+  return collection ? [collection] : [];
 }
 
 function onSearchItemEvent() {
   const zoteroPane = Zotero.getActiveZoteroPane();
+  if (!zoteroPane) return;
 
   const selectedItems = zoteroPane.getSelectedItems();
   ztoolkit.log("Selected Items: ", selectedItems);
@@ -91,14 +85,17 @@ function onSearchItemEvent() {
 
 function onConnectItemEvent() {
   const zoteroPane = Zotero.getActiveZoteroPane();
+  if (!zoteroPane) return;
 
   const selectedItems = zoteroPane.getSelectedItems();
-  if (selectedItems.length > 2) {
+
+  // Count distinct resolved papers, not raw selection: attachments of the
+  // same parent collapse to one identifier.
+  const ids = getIDsFromItems(selectedItems);
+  if (ids.length > 2) {
     alertDialog(getString("error-connector-toomany"));
     return;
   }
-
-  const ids = getIDsFromItems(selectedItems);
   if (ids.length == 0) {
     alertDialog(getString("error-noItemSelected"));
     return;
@@ -109,14 +106,17 @@ function onConnectItemEvent() {
 
 function onSearchCollectionEvent() {
   const zoteroPane = Zotero.getActiveZoteroPane();
+  if (!zoteroPane) return;
 
-  const selectedCollection = zoteroPane.getSelectedCollection();
+  const selectedCollections = getSelectedCollectionsCompat(zoteroPane);
 
-  if (selectedCollection == null) return;
+  if (selectedCollections.length == 0) return;
 
-  ztoolkit.log("Selected Collection: ", selectedCollection);
+  ztoolkit.log("Selected Collections: ", selectedCollections);
 
-  const selectedItems = selectedCollection.getChildItems();
+  const selectedItems = selectedCollections.flatMap((collection) =>
+    collection.getChildItems(),
+  );
 
   const ids = getIDsFromItems(selectedItems);
 

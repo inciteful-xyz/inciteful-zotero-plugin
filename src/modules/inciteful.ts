@@ -1,73 +1,61 @@
 import { config } from "../../package.json";
-import { getString } from "../utils/locale";
+import { getLocaleID, getString } from "../utils/locale";
 import { alertDialog } from "./utils";
 
-function example(
-  target: any,
-  propertyKey: string | symbol,
-  descriptor: PropertyDescriptor,
-) {
-  const original = descriptor.value;
-  descriptor.value = function (...args: any) {
-    try {
-      ztoolkit.log(`Calling example ${target.name}.${String(propertyKey)}`);
-      return original.apply(this, args);
-    } catch (e) {
-      ztoolkit.log(`Error in example ${target.name}.${String(propertyKey)}`, e);
-      throw e;
-    }
-  };
-  return descriptor;
-}
+const ITEM_MENU_ID = `${config.addonRef}-item-menu`;
+const COLLECTION_MENU_ID = `${config.addonRef}-collection-menu`;
 
 export class SearchFactory {
-  @example
-  static registerRightClickCollectionMenuItem() {
+  /**
+   * Register the Inciteful entries in the item and collection context menus
+   * via the native `Zotero.MenuManager` plugin API (Zotero 8+).
+   */
+  static registerMenus() {
     const menuIcon = `chrome://${config.addonRef}/content/icons/favicon@0.5x.png`;
-    // item menuitem with icon
-    ztoolkit.Menu.register("collection", {
-      tag: "menuseparator",
+
+    Zotero.MenuManager.registerMenu({
+      menuID: ITEM_MENU_ID,
+      pluginID: config.addonID,
+      target: "main/library/item",
+      menus: [
+        {
+          menuType: "submenu",
+          l10nID: getLocaleID("menuitem-main"),
+          icon: menuIcon,
+          menus: [
+            {
+              menuType: "menuitem",
+              l10nID: getLocaleID("menuitem-search"),
+              onCommand: () => addon.hooks.onSearchItemEvent(),
+            },
+            {
+              menuType: "menuitem",
+              l10nID: getLocaleID("menuitem-connector"),
+              onCommand: () => addon.hooks.onConnectItemEvent(),
+            },
+          ],
+        },
+      ],
     });
 
-    ztoolkit.Menu.register("collection", {
-      tag: "menuitem",
-      id: "zotero-collectionmenu-inciteful-search",
-      label: getString("collectionitem-search"),
-
-      // oncommand: 'alert("Hello World!")',
-      commandListener: (ev) => addon.hooks.onSearchCollectionEvent(),
-      icon: menuIcon,
+    Zotero.MenuManager.registerMenu({
+      menuID: COLLECTION_MENU_ID,
+      pluginID: config.addonID,
+      target: "main/library/collection",
+      menus: [
+        {
+          menuType: "menuitem",
+          l10nID: getLocaleID("collectionitem-search"),
+          icon: menuIcon,
+          onCommand: () => addon.hooks.onSearchCollectionEvent(),
+        },
+      ],
     });
   }
 
-  @example
-  static registerRightClickMenuItem() {
-    const menuIcon = `chrome://${config.addonRef}/content/icons/favicon@0.5x.png`;
-    // item menuitem with icon
-    ztoolkit.Menu.register("item", {
-      tag: "menuseparator",
-    });
-
-    ztoolkit.Menu.register("item", {
-      tag: "menu",
-      id: "zotero-itemmenu-inciteful-main",
-      label: getString("menuitem-main"),
-      children: [
-        {
-          tag: "menuitem",
-          id: "zotero-itemmenu-inciteful-search",
-          label: getString("menuitem-search"),
-          commandListener: (ev) => addon.hooks.onSearchItemEvent(),
-        },
-        {
-          tag: "menuitem",
-          id: "zotero-itemmenu-inciteful-connector",
-          label: getString("menuitem-connector"),
-          commandListener: (ev) => addon.hooks.onConnectItemEvent(),
-        },
-      ],
-      icon: menuIcon,
-    });
+  static unregisterMenus() {
+    Zotero.MenuManager.unregisterMenu(ITEM_MENU_ID);
+    Zotero.MenuManager.unregisterMenu(COLLECTION_MENU_ID);
   }
 }
 
@@ -139,22 +127,24 @@ function addTrackingParams(params: QueryParams): QueryParams {
 export function getIDsFromItems(items: Array<Zotero.Item>): Array<string> {
   const topLevelItems = ensureTopLevelItems(items);
 
-  const ids = Array<string>();
+  // Deduplicate: attachments of the same parent or overlapping collection
+  // selections can resolve to the same item/identifier more than once.
+  const ids = new Set<string>();
 
   for (const item of topLevelItems) {
     const doi = item.getField("DOI");
 
     if (doi != null && doi != "") {
-      ids.push(doi.toString());
+      ids.add(doi.toString());
     } else {
       const url = item.getField("url");
-      if (url != null && url != "") ids.push(url.toString());
+      if (url != null && url != "") ids.add(url.toString());
     }
   }
 
   ztoolkit.log("Found IDs: ", ids);
 
-  return ids;
+  return [...ids];
 }
 
 export function ensureTopLevelItems(

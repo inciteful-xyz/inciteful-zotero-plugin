@@ -6,15 +6,6 @@ export type FluentMessageId =
   | 'collectionitem-search'
   | 'error-connector-toomany'
   | 'error-noItemSelected'
-  | 'item-section-example1-head-text'
-  | 'item-section-example1-sidenav-tooltip'
-  | 'item-section-example2-button-tooltip'
-  | 'item-section-example2-head-text'
-  | 'item-section-example2-sidenav-tooltip'
   | 'menuitem-connector'
   | 'menuitem-main'
-  | 'menuitem-search'
-  | 'pref-enable'
-  | 'pref-help'
-  | 'pref-input'
-  | 'pref-title';
+  | 'menuitem-search';
