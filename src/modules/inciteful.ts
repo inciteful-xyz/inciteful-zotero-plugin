@@ -8,7 +8,7 @@ const COLLECTION_MENU_ID = `${config.addonRef}-collection-menu`;
 export class SearchFactory {
   /**
    * Register the Inciteful entries in the item and collection context menus
-   * via the native `Zotero.MenuManager` plugin API (Zotero 8+).
+   * via the native `Zotero.MenuManager` plugin API.
    */
   static registerMenus() {
     const menuIcon = `chrome://${config.addonRef}/content/icons/favicon@0.5x.png`;
