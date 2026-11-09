@@ -53,25 +53,6 @@ function onShutdown(): void {
   delete (Zotero as Record<string, unknown>)[addon.data.config.addonInstance];
 }
 
-/**
- * Zotero 10 replaced `getSelectedCollection()` (which now throws) with the
- * multi-selection-aware `getSelectedCollections()`. Older versions only have
- * the singular form.
- */
-function getSelectedCollectionsCompat(
-  zoteroPane: _ZoteroTypes.ZoteroPane,
-): Zotero.Collection[] {
-  const pane = zoteroPane as unknown as {
-    getSelectedCollections?: () => Zotero.Collection[];
-    getSelectedCollection?: () => Zotero.Collection | undefined;
-  };
-  if (typeof pane.getSelectedCollections === "function") {
-    return pane.getSelectedCollections();
-  }
-  const collection = pane.getSelectedCollection?.();
-  return collection ? [collection] : [];
-}
-
 function onSearchItemEvent() {
   const zoteroPane = Zotero.getActiveZoteroPane();
   if (!zoteroPane) return;
@@ -108,7 +89,12 @@ function onSearchCollectionEvent() {
   const zoteroPane = Zotero.getActiveZoteroPane();
   if (!zoteroPane) return;
 
-  const selectedCollections = getSelectedCollectionsCompat(zoteroPane);
+  // zotero-types does not declare getSelectedCollections() yet.
+  const selectedCollections = (
+    zoteroPane as unknown as {
+      getSelectedCollections(): Zotero.Collection[];
+    }
+  ).getSelectedCollections();
 
   if (selectedCollections.length == 0) return;
 

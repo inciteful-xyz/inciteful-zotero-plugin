@@ -1,8 +1,9 @@
 # Inciteful Plugin for Zotero
 
-The plugin now works with Zotero 10 and continues to support Zotero 8 and 9. Support has been dropped for Zotero 6 and 7. Download the appropriate release below:
+The plugin requires Zotero 10. Older versions of Zotero are no longer supported, but their last compatible releases remain available. Download the appropriate release below:
 
-- Zotero 8/9/10 - [latest release](https://github.com/inciteful-xyz/inciteful-zotero-plugin/releases/latest/download/inciteful-zotero-plugin.xpi)
+- Zotero 10 - [latest release](https://github.com/inciteful-xyz/inciteful-zotero-plugin/releases/latest/download/inciteful-zotero-plugin.xpi)
+- Zotero 8/9 - [0.3.0](https://github.com/inciteful-xyz/inciteful-zotero-plugin/releases/download/v0.3.0/inciteful-zotero-plugin.xpi)
 - Zotero 7 - [0.1.1](https://github.com/inciteful-xyz/inciteful-zotero-plugin/releases/download/0.1.1/inciteful-zotero-plugin.xpi)
 - Zotero 6 - [0.0.9](https://github.com/inciteful-xyz/inciteful-zotero-plugin/releases/download/0.0.9/inciteful-zotero-plugin.xpi)
 
@@ -18,7 +19,7 @@ The current functionality is limited to initiating searches from your collection
 ### Graph Search
 
 - Right click one or more items and select `Inciteful.xyz Tools` -> `Graph Search`
-- Right click a collection and select `Graph Search using Inciteful.xyz` (on Zotero 10 you can select multiple collections to search across all of them)
+- Right click a collection and select `Graph Search using Inciteful.xyz` (you can select multiple collections to search across all of them)
 
 ### Literature Connector
 
