@@ -20,12 +20,12 @@ The current functionality is limited to initiating searches from your collection
 
 ### Graph Search
 
-- Right click one or more items and select `Inciteful.xyz Tools` -> `Graph Search`
-- Right click a collection and select `Graph Search using Inciteful.xyz` (you can select multiple collections to search across all of them)
+- Right click one or more items and select `Inciteful Search Tools` -> `Graph Search`
+- Right click a collection and select `Graph Search using Inciteful` (you can select multiple collections to search across all of them)
 
 ### Literature Connector
 
-- Select two items, right click, then select `Inciteful.xyz Tools` -> `Connect Papers`
+- Select two items, right click, then select `Inciteful Search Tools` -> `Connect Papers`
 
 ## Development
 

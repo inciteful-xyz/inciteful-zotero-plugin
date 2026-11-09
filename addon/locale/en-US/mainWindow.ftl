@@ -1,8 +1,8 @@
 menuitem-main =
-    .label = Inciteful.xyz Tools
+    .label = Inciteful Search Tools
 menuitem-search =
     .label = Graph Search
 menuitem-connector =
     .label = Connect Papers
 collectionitem-search =
-    .label = Graph Search using Inciteful.xyz
+    .label = Graph Search using Inciteful

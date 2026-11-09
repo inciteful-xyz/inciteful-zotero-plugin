@@ -4,6 +4,7 @@ import { alertDialog } from "./utils";
 
 const ITEM_MENU_ID = `${config.addonRef}-item-menu`;
 const COLLECTION_MENU_ID = `${config.addonRef}-collection-menu`;
+const SITE_BASE = "https://incitefulmed.com/academic";
 
 export class SearchFactory {
   /**
@@ -92,7 +93,7 @@ export function openIncitefulSearch(ids: Array<string>) {
   const params = new QueryParams();
   ids.forEach((id) => params.append("ids[]", id));
 
-  launchURL("https://inciteful.xyz/p", params);
+  launchURL(`${SITE_BASE}/p`, params);
 }
 
 export function openIncitefulConnector(from: string, to: string | null) {
@@ -103,7 +104,7 @@ export function openIncitefulConnector(from: string, to: string | null) {
 
   params.append("extendedGraph", "true");
 
-  launchURL("https://inciteful.xyz/c", params);
+  launchURL(`${SITE_BASE}/c`, params);
 }
 
 export function launchURL(url: string, params: QueryParams) {
